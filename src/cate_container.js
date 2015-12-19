@@ -1,11 +1,19 @@
 var _ = require('underscore');
-
-var exports = {
-    _container: []
-};
+var CateRelations = require('./cate_relations').CateRelations;
+var Precondition = require('./precondition').Precondition;
 
 
-exports.insert = function(item){
+function CateContainer(treedatas){
+    Precondition.require(treedatas);
+
+    this._container = [];
+    this._cateRelations = new CateRelations(treedatas);
+}
+
+/*
+@param skipRemoveCateogries {bool} only used in unit test, you probably dont need this
+*/
+CateContainer.prototype.insert = function(item, skipRemoveCateogries){
 
     var ref = this.find({id: item.id});
     var plat = ref[0];
@@ -19,21 +27,32 @@ exports.insert = function(item){
         });
         var _this = this;
         _.each(items, function(e){
-            _this.insert(e);
+            _this.insert(e, skipRemoveCateogries);
         });
 
         return;
     }
 
-    if (item.channels && item.channels[0]){
-        ref = this.find({id: item.id, channels:[{id: item.channels[0].id}]});
 
-        if (!ref[0].length){
+    if (item.channels && item.channels[0]){
+        if (!skipRemoveCateogries){
+            var cateIds = this._cateRelations
+                .directUpAndDownCaties(item.id, item.channels[0].id)
+                .map(function(e){
+                    return e.id; 
+                });
+
+            this.removeCategories(item.id, cateIds);
+        }
+
+        ref = this.find({id: item.id, channels:[{id: item.channels[0].id}]})[0];
+
+        if (!ref.length){
             if (!plat.channels) plat.channels = [];
             plat.channels.push(item.channels[0]);
         }else{
+            var ch = ref[0];
             if (item.channels[0].contents && item.channels[0].contents.length){
-                var ch = ref[0][0];
                 var cs = this.find(item)[0];
 
                 if (cs.length){
@@ -52,21 +71,23 @@ exports.insert = function(item){
                 }else{
                     ch.contents = ch.contents.concat(item.channels[0].contents);
                 }
+            }else{// 移除 contents
+                ch.contents.length = 0;
             }
         }
     }
 };
 
-exports.batch_insert = function(items){
+CateContainer.prototype.batch_insert = function(items, skipRemoveCateogries){
     if (!_.isArray(items)) throw new Error('invalid parameters');
 
     var _this = this;
     items.forEach(function(e){
-        _this.insert(e);
+        _this.insert(e, skipRemoveCateogries);
     });
 };
 
-exports.log = function(){
+CateContainer.prototype.log = function(){
     console.log('container content:\n: ', JSON.stringify(this._container));
 };
 
@@ -76,7 +97,7 @@ exports.log = function(){
 
 有可能存在查找不全的情况, 结果照样返回
  */
-exports.find = function(item){
+CateContainer.prototype.find = function(item){
     var plat = _.find(this._container, function(e){
         return item.id == e.id;
     });
@@ -109,11 +130,11 @@ exports.find = function(item){
 
 };
 
-exports.set = function(data){
+CateContainer.prototype.set = function(data){
     this._container = data;
 };
 
-exports.clear = function(){
+CateContainer.prototype.clear = function(){
     this._container.length = 0;
 };
 
@@ -123,7 +144,7 @@ query valid form:
     -{id: channels:[{id:}]}
     -{id: channels:[{id:, contents:[{id:}...]}]}
  */
-exports.delete = function(query){
+CateContainer.prototype.delete = function(query){
     if (!(query.id && query.channels && query.channels.length === 1))
         throw new Error('invalid parameters');
 
@@ -169,8 +190,31 @@ exports.delete = function(query){
 
 };
 
-exports.get_container = function(){
+CateContainer.prototype.get_container = function(){
     return this._container;
 };
 
-module.exports = exports;
+CateContainer.prototype.removeCategories = function(platid, cateIds) {
+    Precondition.require(platid, cateIds);
+
+    console.log('plat: ', platid);
+
+    var plat = this.find({id: platid})[0];
+
+    if (plat === null) throw new Error('fatal logic error');
+
+
+    if (plat.channels && plat.channels.length){
+        cateIds.forEach(function(m){
+            var index = _.findIndex(plat.channels, function(n){
+                return m == n.id;
+            });
+
+            if (index !== -1){
+                plat.channels.splice(index, 1);
+            }
+        });
+    }
+};
+
+module.exports.CateContainer = CateContainer;

@@ -71,19 +71,6 @@ TreeNode.prototype.getParent = function(indexBuilder) {
     return indexBuilder.find(index);
 };
 
-TreeNode.prototype.directUpAndDownNodes = function(indexBuilder) {
-    checkBuilder(indexBuilder);
-
-    /*
-    top node ?
-
-    middle node ?
-
-    leaf node ?
-     */
-
-};
-
 //get parent nodes, smallest index means closest parent, plat root node is not included
 //不包括平台根节点
 TreeNode.prototype.parents = function(indexBuilder) {
@@ -129,9 +116,6 @@ var IndexBuilder = (function(){
             var id = _this.buildEntryId(e);
             if (_this._index[id])
                 throw new Error('duplicate id found, id:' + e + ', content:' + this._index[id]);
-            if (e.id === 'lvl0_1'){
-                console.log(JSON.stringify(e), ' - ', id);
-            }
             _this._index[id] = new TreeNode(e);
         });
 

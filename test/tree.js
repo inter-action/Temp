@@ -81,6 +81,14 @@ describe('TreeNode', function() {
 
     });
 
+
+    it('insert child node', function(){
+        var node  = new TreeNode('a');
+        node.insertChild(new TreeNode('b'));
+        assert.ok(node.hasChildNodes());
+        assert.ok(node.childNodes().length() == 1);
+    });
+
     it('test childs', function() {
         var query = {
             "id": "1001",
@@ -92,14 +100,6 @@ describe('TreeNode', function() {
         var childs = builder.find(builder.buildEntryId(query)).childs();
         assert(childs.length === 9);
         // console.log(childs.map(function(e){ return e.toString(); }).join('\n'));
-    });
-
-
-    it('insert child node', function(){
-        var node  = new TreeNode('a');
-        node.insertChild(new TreeNode('b'));
-        assert.ok(node.hasChildNodes());
-        assert.ok(node.childNodes().length() == 1);
     });
 
 
