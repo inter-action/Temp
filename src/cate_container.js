@@ -39,7 +39,7 @@ CateContainer.prototype.insert = function(item, skipRemoveCateogries){
             var cateIds = this._cateRelations
                 .directUpAndDownCaties(item.id, item.channels[0].id)
                 .map(function(e){
-                    return e.id; 
+                    return e.id;
                 });
 
             this.removeCategories(item.id, cateIds);
@@ -72,7 +72,8 @@ CateContainer.prototype.insert = function(item, skipRemoveCateogries){
                     ch.contents = ch.contents.concat(item.channels[0].contents);
                 }
             }else{// 移除 contents
-                ch.contents.length = 0;
+                if (ch.contents != null)
+                    ch.contents.length = 0;
             }
         }
     }

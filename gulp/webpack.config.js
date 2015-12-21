@@ -6,13 +6,13 @@ module.exports = {
     // ],
     output: {
         filename: 'bundle.js',
-        libraryTarget: "this"
+        libraryTarget: "var"
     },
     resolve: {
         extensions: ['', '.js']
     },
     watch: false,
-    externals: ['underscore'],//忽略 underscore 依赖 (ingore underscore, used with output.libraryTarget.)
+    externals: [{'underscore': '_'}],//忽略 underscore 依赖 (ingore underscore, used with output.libraryTarget.)
     module: {
         loaders: [
             { test: /\.js$/, loaders: [], exclude: /node_modules/ }
