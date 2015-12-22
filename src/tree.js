@@ -46,7 +46,7 @@ TreeNode.prototype.childs = function() {
         result.push(trnode);
         var r = trnode.childs();
         if (r.length !== 0){
-            Array.prototype.push.call(result, r);
+            Array.prototype.push.apply(result, r);
         }
     });
     return result;
