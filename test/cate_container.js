@@ -352,6 +352,7 @@ describe('CateContainer', function() {
             assert.ok(cateContainer.find({
                 id: 1
             })[0].channels.length === 3);
+
             assert.ok(cateContainer.find({
                 id: 1,
                 channels: [{
@@ -483,7 +484,7 @@ describe('CateContainer', function() {
 
 
         it('middle category remove', function() {
-            // todos: 
+            // todos:
             //set up
             // find middle node
             // var cateries = [];

@@ -52,25 +52,20 @@ CateContainer.prototype.insert = function(item, skipRemoveCateogries){
             plat.channels.push(item.channels[0]);
         }else{
             var ch = ref[0];
-            if (item.channels[0].contents && item.channels[0].contents.length){
-                var cs = this.find(item)[0];
-
-                if (cs.length){
-                    if (cs.length != ch.contents.length){
-                        _.each(cs, function(m){
-                            var isfound = _.find(ch.contents, function(n){
-                                return n.id == m.id;
-                            });
-
-                            if (!isfound){
-                                if (!ch.contents) ch.contents = [];
-                                ch.contents.push(m);
-                            }
+            if (item.channels[0].contents){
+                var item_contents = item.channels[0].contents;
+                if (item_contents.length){
+                    _.each(item_contents, function(m){
+                        var isfound = _.find(ch.contents, function(n){
+                            return n.id == m.id;
                         });
-                    }
-                }else{
-                    ch.contents = ch.contents.concat(item.channels[0].contents);
+                        if (!isfound){
+                            if (!ch.contents) ch.contents = [];
+                            ch.contents.push(m);
+                        }
+                    });
                 }
+
             }else{// 移除 contents
                 if (ch.contents != null)
                     ch.contents.length = 0;
