@@ -22,7 +22,7 @@ function IdGenerator(){
     var id = 0;
 
     return function(){
-        return id++ & 0xff;
+        return id++ & 0xffff;
     };
 }
 var newId = IdGenerator();
@@ -46,7 +46,7 @@ Cache.prototype.get = function(id) {
     if (this._reg[id] != null && this._reg[id].isValid(this._maxIdleTime)){
         return this._reg[id].get();
     }
-    return null; 
+    return null;
 };
 
 Cache.prototype.isValid = function(id) {
@@ -63,7 +63,7 @@ Cache.prototype.isValid = function(id) {
 
     return result;
 };
-// !! warning: be cautious when using this feature, this could cause potential phantom read, 
+// !! warning: be cautious when using this feature, this could cause potential phantom read,
 // since this setInterval is running on the js Engine event queue
 Cache.prototype.startChecking = function() {
     var _chk = function(){
